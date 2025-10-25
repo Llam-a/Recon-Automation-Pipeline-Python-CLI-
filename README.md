@@ -8,9 +8,7 @@ Orchestrate: `subfinder` → `httpx` → `gowitness` → aggregate CSV with flag
 
 ## Chạy nhanh
 ```bash
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-python recon.py -d example.com -o outdir
+
 ```
 
 Kết quả:
