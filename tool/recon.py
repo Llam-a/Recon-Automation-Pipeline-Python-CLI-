@@ -79,7 +79,7 @@ class ReconPipeline:
 
     def step_3_content_discovery(self, httpx_json):
         """
-        Bước mới: Dùng FFUF để quét thư mục ẩn (như CV mô tả)
+        Bước mới: Dùng FFUF để quét thư mục ẩn
         Chỉ quét các URL có status code 200/403 để tiết kiệm thời gian.
         """
         print("\n--- STEP 3: CONTENT DISCOVERY (FFUF) ---")
@@ -140,8 +140,7 @@ class ReconPipeline:
                 f.write('\n'.join(live_urls))
                 
             screenshots_dir = os.path.join(self.session_dir, "screenshots")
-            # Thêm --disable-db để tránh lỗi database lock
-            # Thay --destination bằng --screenshot-path
+            
             cmd = ["gowitness", "scan", "file", "-f", live_urls_file, "--screenshot-path", screenshots_dir, "--threads", "5"]
             self.run_command(cmd)
         except Exception as e:
@@ -160,7 +159,7 @@ class ReconPipeline:
             for c in cols:
                 if c not in df.columns: df[c] = ""
             
-            # Fix lỗi SettingWithCopyWarning bằng .copy()
+
             final_df = df[cols].copy()
 
             admin_keywords = ['admin', 'login', 'dashboard', 'portal']
