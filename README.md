@@ -36,7 +36,7 @@ This tool automates the tedious parts of the reconnaissance phase, ensuring cons
 ### 2. Searchable HTML Report
 <img width="1918" height="937" alt="image" src="https://github.com/user-attachments/assets/39c9f0a7-de64-411d-9a1c-f158570f4a97" />
 
-## 📦 Installation & Usage
+## Installation & Usage
 
 1. **Prerequisites:**
    Ensure you have Go installed and the following tools in your PATH:
