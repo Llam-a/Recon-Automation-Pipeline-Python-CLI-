@@ -76,11 +76,7 @@ class ReconPipeline:
         self.run_command(cmd)
         return json_output
 
-    def step_3_content_discovery(self, httpx_json):
-        """
-        Bước mới: Dùng FFUF để quét thư mục ẩn
-        Chỉ quét các URL có status code 200/403 để tiết kiệm thời gian.
-        """
+    def step_3_content_discovery(self, httpx_json)
         print("\n--- STEP 3: CONTENT DISCOVERY (FFUF) ---")
         
     
@@ -93,7 +89,7 @@ class ReconPipeline:
             with open(httpx_json, 'r') as f:
                 for line in f:
                     data = json.loads(line)
-                    # Chỉ quét các trang web sống
+                
                     if data.get("status_code") in [200, 403, 301, 302]:
                         live_targets.append(data.get("url"))
         except:
