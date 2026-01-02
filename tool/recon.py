@@ -7,20 +7,19 @@ import time
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
-# Cấu hình đường dẫn và tham số
 CONFIG = {
     "SUBFINDER_THREADS": 20,
     "HTTPX_THREADS": 50,
     "HTTPX_RATE_LIMIT": 150,
     "RETRIES": 2, 
     "OUTPUT_DIR": "recon_results",
-    # Đường dẫn wordlist mặc định trên Kali Linux
+
     "WORDLIST": "/usr/share/wordlists/dirb/common.txt" 
 }
 
 class ReconPipeline:
     def __init__(self, target_domain):
-        # Làm sạch input
+    
         self.target = target_domain.replace("https://", "").replace("http://", "").rstrip("/")
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.session_dir = os.path.join(CONFIG["OUTPUT_DIR"], f"{self.target}_{self.timestamp}")
@@ -50,7 +49,7 @@ class ReconPipeline:
         cmd = ["subfinder", "-d", self.target, "-t", str(CONFIG["SUBFINDER_THREADS"]), "-o", output_file, "-silent"]
         self.run_command(cmd)
         
-        # Luôn thêm root domain
+    
         with open(output_file, 'a') as f:
             f.write(f"{self.target}\n")
         
@@ -84,7 +83,7 @@ class ReconPipeline:
         """
         print("\n--- STEP 3: CONTENT DISCOVERY (FFUF) ---")
         
-        # Kiểm tra wordlist
+    
         if not os.path.exists(CONFIG["WORDLIST"]):
             print(f"[!] Không tìm thấy wordlist tại {CONFIG['WORDLIST']}. Bỏ qua bước này.")
             return
@@ -100,7 +99,7 @@ class ReconPipeline:
         except:
             return
 
-        # Demo: Chỉ quét tối đa 3 targets đầu tiên để tránh treo máy lâu
+
         for url in live_targets[:3]:
             print(f"[*] Fuzzing: {url}")
             ffuf_out = os.path.join(self.session_dir, f"ffuf_{url.replace('://', '_').replace('/', '')}.json")
@@ -108,11 +107,11 @@ class ReconPipeline:
                 "ffuf", 
                 "-u", f"{url}/FUZZ", 
                 "-w", CONFIG["WORDLIST"],
-                "-mc", "200,403", # Chỉ lấy code 200, 403
+                "-mc", "200,403", 
                 "-o", ffuf_out, "-of", "json",
-                "-t", "50", "-s" # Silent mode
+                "-t", "50", "-s" 
             ]
-            # Không dùng run_command có retry vì ffuf chạy lâu
+            
             try:
                 subprocess.run(cmd, timeout=60, capture_output=True) # Timeout 60s mỗi site
             except subprocess.TimeoutExpired:
@@ -176,7 +175,7 @@ class ReconPipeline:
             
             final_df.to_csv(csv_path, index=False)
             
-            # HTML Searchable Template
+        
             html_template = f"""
             <html>
             <head>
@@ -207,10 +206,10 @@ class ReconPipeline:
         if subs_file:
             httpx_res = self.step_2_probing(subs_file)
             if httpx_res and os.path.exists(httpx_res):
-                # Chạy Content Discovery (Ffuf) trước
+                
                 self.step_3_content_discovery(httpx_res)
                 
-                # Chạy Screenshot và Report song song
+                
                 with ThreadPoolExecutor(max_workers=2) as executor:
                     executor.submit(self.step_4_screenshot, httpx_res)
                     executor.submit(self.step_5_reporting, httpx_res)
